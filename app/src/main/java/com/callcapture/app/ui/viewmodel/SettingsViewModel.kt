@@ -115,7 +115,7 @@ class SettingsViewModel(application: Application) : AndroidViewModel(application
                     val htmlUrl = json.optString("html_url", "https://github.com/abzgif/android-call-capture/releases")
                     val body = json.optString("body", "No release notes provided.")
                     val cleanLatest = tagName.removePrefix("v").trim()
-                    val currentVersion = "1.1.0"
+                    val currentVersion = "1.0.0"
 
                     if (isNewerVersion(cleanLatest, currentVersion)) {
                         _updateStatus.value = UpdateCheckResult.UpdateAvailable(
@@ -127,7 +127,7 @@ class SettingsViewModel(application: Application) : AndroidViewModel(application
                         _updateStatus.value = UpdateCheckResult.UpToDate(currentVersion)
                     }
                 } else if (code == 404) {
-                    _updateStatus.value = UpdateCheckResult.UpToDate("1.1.0")
+                    _updateStatus.value = UpdateCheckResult.UpToDate("1.0.0")
                 } else {
                     _updateStatus.value = UpdateCheckResult.Error("Server returned code $code")
                 }
