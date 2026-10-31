@@ -309,7 +309,7 @@ fun SettingsScreen(
                             )
                             Spacer(modifier = Modifier.height(2.dp))
                             Text(
-                                text = "Targeting Android 16 (API 36) • Open Source",
+                                text = "Targeting Android 15 (API 35) • Open Source",
                                 style = MaterialTheme.typography.bodySmall,
                                 color = MaterialTheme.colorScheme.onSurfaceVariant
                             )

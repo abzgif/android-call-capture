@@ -8,7 +8,7 @@
 - ✈️ **Telegram Voice Calls**
 - 🛡️ Other supported VoIP calling applications
 
-Built with **Jetpack Compose**, **Material 3**, **Kotlin Coroutines**, **Room Database**, and **Android Foreground Service (`microphone`)** architecture compliant with Android 8.0 through Android 16 (API 36).
+Built with **Jetpack Compose**, **Material 3**, **Kotlin Coroutines**, **Room Database**, and **Android Foreground Service (`microphone`)** architecture compliant with Android 8.0 through Android 15 (API 35+).
 
 ---
 
@@ -115,7 +115,7 @@ Built with **Jetpack Compose**, **Material 3**, **Kotlin Coroutines**, **Room Da
 ### Requirements
 - **Android Studio Ladybug (2024.2+)** or later
 - **JDK 17 or JDK 21**
-- **Android SDK Platform 36 (Android 16)**
+- **Android SDK Platform 35 (Android 15)**
 - Minimum supported SDK: **API 26 (Android 8.0)**
 
 ### Build via Command Line
