@@ -12,6 +12,14 @@ Built with **Jetpack Compose**, **Material 3**, **Kotlin Coroutines**, **Room Da
 
 ---
 
+## 📸 Screenshots
+
+| Home & Audio Player | Permissions & Setup | Settings & Audio Engine |
+|:---:|:---:|:---:|
+| <img src="screenshots/home_screen.webp" width="270" alt="Home Screen with Waveform Audio Player" /> | <img src="screenshots/permissions_screen.webp" width="270" alt="Permissions and Setup Screen" /> | <img src="screenshots/settings_screen.webp" width="270" alt="Settings and Audio Engine" /> |
+
+---
+
 ## 🏗️ Architecture & How It Works
 
 ```
