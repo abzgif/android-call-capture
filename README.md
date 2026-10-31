@@ -116,7 +116,7 @@ Built with **Jetpack Compose**, **Material 3**, **Kotlin Coroutines**, **Room Da
 - **Android Studio Ladybug (2024.2+)** or later
 - **JDK 17 or JDK 21**
 - **Android SDK Platform 35 (Android 15)**
-- Minimum supported SDK: **API 26 (Android 8.0)**
+- Minimum supported SDK: **API 24 (Android 7.0)**
 
 ### Build via Command Line
 ```bash
