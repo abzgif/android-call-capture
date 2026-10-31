@@ -1,0 +1,13 @@
+<resources>
+    <string name="app_name">Call Capture</string>
+    <string name="accessibility_service_name">Call Capture VoIP Assistant</string>
+    <string name="accessibility_service_description">Detects incoming and outgoing calls in VoIP applications (WhatsApp, Messenger, Telegram) to automatically start and stop recording.</string>
+    <string name="notification_listener_name">Call Capture VoIP Notification Monitor</string>
+
+    <string name="channel_recording_name">Call Recording Status</string>
+    <string name="channel_recording_desc">Shows ongoing call recording status and controls.</string>
+
+    <string name="notification_title_recording">Recording Call</string>
+    <string name="notification_action_stop">Stop</string>
+    <string name="notification_action_pause">Pause</string>
+</resources>
