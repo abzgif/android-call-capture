@@ -1,4 +1,4 @@
-**Browse more useful projects at:** [bytegif.com](https://bytegif.com).
+### **Browse more useful projects at:** [bytegif.com](https://bytegif.com)
 # Call Capture 🎙️
 ### Universal Call & VoIP Recorder for Android
 
