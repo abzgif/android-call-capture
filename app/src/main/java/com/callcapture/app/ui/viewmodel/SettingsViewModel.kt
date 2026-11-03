@@ -99,39 +99,68 @@ class SettingsViewModel(application: Application) : AndroidViewModel(application
         viewModelScope.launch(Dispatchers.IO) {
             _updateStatus.value = UpdateCheckResult.Checking
             try {
-                val url = URL("https://api.github.com/repos/abzgif/android-call-capture/releases/latest")
-                val conn = url.openConnection() as HttpURLConnection
-                conn.requestMethod = "GET"
-                conn.setRequestProperty("Accept", "application/vnd.github.v3+json")
-                conn.setRequestProperty("User-Agent", "CallCapture-Android")
-                conn.connectTimeout = 8000
-                conn.readTimeout = 8000
+                val currentVersion = com.callcapture.app.BuildConfig.VERSION_NAME
+
+                // Use GitHub web redirect (avoids api.github.com unauthenticated 60 req/hr rate-limiting / 403 errors)
+                val url = URL("https://github.com/abzgif/android-call-capture/releases/latest")
+                val conn = (url.openConnection() as HttpURLConnection).apply {
+                    instanceFollowRedirects = false
+                    requestMethod = "GET"
+                    setRequestProperty("User-Agent", "Mozilla/5.0 (Android; Mobile)")
+                    connectTimeout = 8000
+                    readTimeout = 8000
+                }
 
                 val code = conn.responseCode
-                if (code == 200) {
-                    val jsonStr = conn.inputStream.bufferedReader().use { it.readText() }
-                    val json = JSONObject(jsonStr)
-                    val tagName = json.optString("tag_name", "").trim()
-                    val htmlUrl = json.optString("html_url", "https://github.com/abzgif/android-call-capture/releases")
-                    val body = json.optString("body", "No release notes provided.")
-                    val cleanLatest = tagName.removePrefix("v").trim()
-                    val currentVersion = com.callcapture.app.BuildConfig.VERSION_NAME
+                var latestTag: String? = null
+                var releaseUrl = "https://github.com/abzgif/android-call-capture/releases"
 
+                if (code in 300..399) {
+                    val location = conn.getHeaderField("Location") ?: ""
+                    if (location.isNotBlank()) {
+                        releaseUrl = location
+                        latestTag = location.substringAfterLast("/").trim()
+                    }
+                }
+                conn.disconnect()
+
+                // Fallback to REST API if web redirect didn't resolve a tag
+                if (latestTag.isNullOrBlank()) {
+                    try {
+                        val apiUrl = URL("https://api.github.com/repos/abzgif/android-call-capture/releases/latest")
+                        val apiConn = (apiUrl.openConnection() as HttpURLConnection).apply {
+                            requestMethod = "GET"
+                            setRequestProperty("Accept", "application/vnd.github.v3+json")
+                            setRequestProperty("User-Agent", "CallCapture-Android")
+                            connectTimeout = 5000
+                            readTimeout = 5000
+                        }
+                        if (apiConn.responseCode == 200) {
+                            val jsonStr = apiConn.inputStream.bufferedReader().use { it.readText() }
+                            val json = JSONObject(jsonStr)
+                            latestTag = json.optString("tag_name", "").trim()
+                            releaseUrl = json.optString("html_url", releaseUrl)
+                        }
+                        apiConn.disconnect()
+                    } catch (_: Exception) {
+                        // ignore API fallback error
+                    }
+                }
+
+                if (!latestTag.isNullOrBlank()) {
+                    val cleanLatest = latestTag.removePrefix("v").trim()
                     if (isNewerVersion(cleanLatest, currentVersion)) {
                         _updateStatus.value = UpdateCheckResult.UpdateAvailable(
-                            latestVersion = tagName,
-                            releaseNotes = body,
-                            releaseUrl = htmlUrl
+                            latestVersion = latestTag,
+                            releaseNotes = "A new version of Call Capture ($latestTag) is available on GitHub with bug fixes and improvements.",
+                            releaseUrl = releaseUrl
                         )
                     } else {
                         _updateStatus.value = UpdateCheckResult.UpToDate(currentVersion)
                     }
-                } else if (code == 404) {
-                    _updateStatus.value = UpdateCheckResult.UpToDate(com.callcapture.app.BuildConfig.VERSION_NAME)
                 } else {
-                    _updateStatus.value = UpdateCheckResult.Error("Server returned code $code")
+                    _updateStatus.value = UpdateCheckResult.UpToDate(currentVersion)
                 }
-                conn.disconnect()
             } catch (e: Exception) {
                 _updateStatus.value = UpdateCheckResult.Error(e.localizedMessage ?: "Failed to connect to GitHub")
             }
