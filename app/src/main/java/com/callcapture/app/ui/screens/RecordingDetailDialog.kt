@@ -77,8 +77,14 @@ fun RecordingDetailDialog(
 
                 Spacer(modifier = Modifier.height(12.dp))
 
+                val displayTitle = when {
+                    !recording.contactName.isNullOrBlank() -> recording.contactName
+                    !recording.phoneNumber.isNullOrBlank() -> recording.phoneNumber
+                    recording.title.contains("Phone Call Call") -> "Unknown Caller"
+                    else -> recording.title
+                }
                 Text(
-                    text = recording.contactName ?: recording.phoneNumber ?: recording.title,
+                    text = displayTitle,
                     style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.Bold
                 )

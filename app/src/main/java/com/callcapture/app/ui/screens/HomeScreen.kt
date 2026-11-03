@@ -527,9 +527,15 @@ private fun RecordingCardItem(
 
             // Main Info
             Column(modifier = Modifier.weight(1f)) {
+                val displayTitle = when {
+                    !recording.contactName.isNullOrBlank() -> recording.contactName
+                    !recording.phoneNumber.isNullOrBlank() -> recording.phoneNumber
+                    recording.title.contains("Phone Call Call") -> "Unknown Caller"
+                    else -> recording.title
+                }
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Text(
-                        text = recording.contactName ?: recording.phoneNumber ?: recording.title,
+                        text = displayTitle,
                         style = MaterialTheme.typography.titleMedium,
                         fontWeight = FontWeight.Bold,
                         maxLines = 1,

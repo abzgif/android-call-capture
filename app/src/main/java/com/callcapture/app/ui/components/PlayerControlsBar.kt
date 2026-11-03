@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -56,7 +57,8 @@ fun PlayerControlsBar(
     Card(
         modifier = modifier
             .fillMaxWidth()
-            .padding(12.dp),
+            .navigationBarsPadding()
+            .padding(start = 12.dp, end = 12.dp, bottom = 12.dp, top = 4.dp),
         shape = RoundedCornerShape(20.dp),
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.surfaceVariant
@@ -71,8 +73,14 @@ fun PlayerControlsBar(
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 Column(modifier = Modifier.weight(1f)) {
+                    val displayTitle = when {
+                        !recording.contactName.isNullOrBlank() -> recording.contactName
+                        !recording.phoneNumber.isNullOrBlank() -> recording.phoneNumber
+                        recording.title.contains("Phone Call Call") -> "Unknown Caller"
+                        else -> recording.title
+                    }
                     Text(
-                        text = recording.contactName ?: recording.phoneNumber ?: recording.title,
+                        text = displayTitle,
                         style = MaterialTheme.typography.titleMedium,
                         fontWeight = FontWeight.Bold,
                         maxLines = 1,

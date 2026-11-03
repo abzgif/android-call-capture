@@ -246,12 +246,16 @@ class CallRecordingService : Service() {
                         }
                     }
 
-                    val displayName = finalContactName
-                        ?: finalIdentifier
-                        ?: "${currentCallType.displayName} Call"
+                    val displayName = finalContactName ?: finalIdentifier
+
+                    val titleString = if (!displayName.isNullOrBlank()) {
+                        "$displayName (${currentCallType.displayName})"
+                    } else {
+                        "${currentCallType.displayName} Call"
+                    }
 
                     val entity = RecordingEntity(
-                        title = "$displayName (${currentCallType.displayName})",
+                        title = titleString,
                         contactName = finalContactName,
                         phoneNumber = if (currentCallType == CallType.CELLULAR) finalIdentifier else null,
                         callType = currentCallType,
