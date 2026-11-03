@@ -417,6 +417,7 @@ fun HomeScreen(
             )
         }
     }
+}
 
     // Confirmation dialog for batch deletion
     if (showBatchDeleteConfirm) {
