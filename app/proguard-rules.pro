@@ -3,6 +3,9 @@
 # Preserve Kotlin Annotations & Reflection metadata
 -keepattributes *Annotation*,Signature,InnerClasses,EnclosingMethod
 
+# BuildConfig
+-keep class com.callcapture.app.BuildConfig { *; }
+
 # Room Database Persistence Guards (prevent column/table name obfuscation)
 -keep class com.callcapture.app.data.db.** { *; }
 -keep class com.callcapture.app.data.model.** { *; }

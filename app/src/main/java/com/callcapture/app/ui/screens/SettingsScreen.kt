@@ -303,7 +303,7 @@ fun SettingsScreen(
                     ) {
                         Column(modifier = Modifier.weight(1f)) {
                             Text(
-                                text = "Call Capture v1.0.0",
+                                text = "Call Capture v${com.callcapture.app.BuildConfig.VERSION_NAME}",
                                 style = MaterialTheme.typography.titleMedium,
                                 fontWeight = FontWeight.Bold
                             )
