@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.Intent
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInVertically
@@ -16,9 +17,12 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -134,8 +138,9 @@ fun HomeScreen(
         selectedIds.clear()
     }
 
-    Scaffold(
-        topBar = {
+    Box(modifier = Modifier.fillMaxSize()) {
+        Scaffold(
+            topBar = {
             if (isSelectionMode) {
                 // Multi-select Action Bar
                 val allSelected = recordings.isNotEmpty() && selectedIds.size == recordings.size
@@ -279,34 +284,12 @@ fun HomeScreen(
                     }
                 )
             }
-        },
-        bottomBar = {
-            AnimatedVisibility(
-                visible = currentPlaying != null,
-                enter = slideInVertically(initialOffsetY = { it }) + fadeIn(),
-                exit = slideOutVertically(targetOffsetY = { it }) + fadeOut()
-            ) {
-                currentPlaying?.let { rec ->
-                    PlayerControlsBar(
-                        recording = rec,
-                        isPlaying = isPlaying,
-                        currentPositionMs = currentPosMs,
-                        totalDurationMs = rec.durationMs,
-                        playbackSpeed = playbackSpeed,
-                        onPlayPause = { viewModel.playRecording(rec) },
-                        onSeek = { viewModel.seekTo(it) },
-                        onReplay5s = { viewModel.replay5s() },
-                        onChangeSpeed = { viewModel.togglePlaybackSpeed() },
-                        onClose = { viewModel.stopPlayback() }
-                    )
-                }
-            }
         }
     ) { paddingValues ->
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(paddingValues)
+                .padding(top = paddingValues.calculateTopPadding())
         ) {
             // Filter Tabs
             LazyRow(
@@ -357,9 +340,19 @@ fun HomeScreen(
                     }
                 }
             } else {
+                val bottomNavPadding = WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding()
+                val bottomListPadding by animateDpAsState(
+                    targetValue = if (currentPlaying != null) 210.dp + bottomNavPadding else bottomNavPadding + 16.dp,
+                    label = "bottomListPadding"
+                )
                 LazyColumn(
                     modifier = Modifier.fillMaxSize(),
-                    contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp),
+                    contentPadding = PaddingValues(
+                        start = 16.dp,
+                        end = 16.dp,
+                        top = 8.dp,
+                        bottom = bottomListPadding
+                    ),
                     verticalArrangement = Arrangement.spacedBy(10.dp)
                 ) {
                     items(recordings, key = { it.id }) { rec ->
@@ -399,6 +392,29 @@ fun HomeScreen(
                     }
                 }
             }
+        }
+    }
+
+    // Mini Player Overlay (anchored directly to bottom without reserving an empty black space in Scaffold)
+    AnimatedVisibility(
+        visible = currentPlaying != null,
+        modifier = Modifier.align(Alignment.BottomCenter),
+        enter = slideInVertically(initialOffsetY = { it }) + fadeIn(),
+        exit = slideOutVertically(targetOffsetY = { it }) + fadeOut()
+    ) {
+        currentPlaying?.let { rec ->
+            PlayerControlsBar(
+                recording = rec,
+                isPlaying = isPlaying,
+                currentPositionMs = currentPosMs,
+                totalDurationMs = rec.durationMs,
+                playbackSpeed = playbackSpeed,
+                onPlayPause = { viewModel.playRecording(rec) },
+                onSeek = { viewModel.seekTo(it) },
+                onReplay5s = { viewModel.replay5s() },
+                onChangeSpeed = { viewModel.togglePlaybackSpeed() },
+                onClose = { viewModel.stopPlayback() }
+            )
         }
     }
 
